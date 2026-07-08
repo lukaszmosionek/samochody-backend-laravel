@@ -1,0 +1,191 @@
+openapi: 3.0.3
+info:
+  title: Car Listings API
+  version: 1.0.0
+  description: API for managing car advertisements.
+servers:
+  - url: http://127.0.0.1:8000/api
+    description: Local development server
+paths:
+  /cars:
+    get:
+      summary: List all cars
+      description: Returns a paginated list of car advertisements.
+      operationId: listCars
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarListResponse'
+    post:
+      summary: Create a car
+      description: Creates a new car advertisement.
+      operationId: createCar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarInput'
+      responses:
+        '201':
+          description: Car created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarResource'
+        '422':
+          description: Validation error
+  /cars/{id}:
+    get:
+      summary: Get a car by id
+      description: Returns a single car advertisement by its identifier.
+      operationId: getCar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarResource'
+        '404':
+          description: Car not found
+    put:
+      summary: Update a car
+      description: Updates an existing car advertisement.
+      operationId: updateCar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarInput'
+      responses:
+        '200':
+          description: Car updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarResource'
+        '404':
+          description: Car not found
+        '422':
+          description: Validation error
+    delete:
+      summary: Delete a car
+      description: Deletes a car advertisement by its identifier.
+      operationId: deleteCar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Car deleted successfully
+        '404':
+          description: Car not found
+components:
+  schemas:
+    CarInput:
+      type: object
+      required:
+        - make
+        - model
+        - year
+        - price
+        - mileage
+      properties:
+        make:
+          type: string
+          example: Toyota
+        model:
+          type: string
+          example: Corolla
+        year:
+          type: integer
+          example: 2020
+        price:
+          type: number
+          format: float
+          example: 65000
+        mileage:
+          type: integer
+          example: 45000
+        location:
+          type: string
+          example: Warszawa
+        description:
+          type: string
+          example: Dobry stan
+        status:
+          type: string
+          enum: [available, sold]
+          example: available
+    CarResource:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Car'
+    Car:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        make:
+          type: string
+          example: Toyota
+        model:
+          type: string
+          example: Corolla
+        year:
+          type: integer
+          example: 2020
+        price:
+          type: string
+          example: "65000.00"
+        mileage:
+          type: integer
+          example: 45000
+        location:
+          type: string
+          example: Warszawa
+        description:
+          type: string
+          example: Dobry stan
+        status:
+          type: string
+          example: available
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    CarListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Car'
+        links:
+          type: object
+        meta:
+          type: object
