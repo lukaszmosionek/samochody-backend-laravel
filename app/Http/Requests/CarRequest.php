@@ -34,4 +34,17 @@ class CarRequest extends FormRequest
 
         return $rules;
     }
+
+    public function validationData(): array
+    {
+        if ($this->isJson()) {
+            $decoded = json_decode($this->getContent(), true);
+
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return $this->all();
+    }
 }
